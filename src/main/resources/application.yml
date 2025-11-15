@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    default: local
+
   datasource:
     url: jdbc:mysql://localhost:3306/pltc
     username: root

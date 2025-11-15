@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${MYSQL_URL}         # Railway 환경변수에 맞게 이름 정하기
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update    # 처음엔 update, 나중에 바꿀 수 있음
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 3306
+
+app:
+  kakao:
+    rest-key: ${KAKAO_REST_KEY}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+
+jwt:
+  secret: ${JWT_SECRET}
