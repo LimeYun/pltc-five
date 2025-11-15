@@ -17,7 +17,7 @@ spring:
       mode: never
 
 server:
-  port: 3306
+  port: 8080
 
 app:
   kakao:
