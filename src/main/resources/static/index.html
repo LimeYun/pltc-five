@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>PLTC Prayer & Mission</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="app">
+    <header class="app-header">
+        <h1>PLTC</h1>
+        <p class="subtitle">기도 & 말씀 & 미션</p>
+    </header>
+
+    <main>
+        <!-- 오늘의 기도제목 -->
+        <section class="card">
+            <div class="card-header">
+                <h2>오늘의 기도제목</h2>
+                <button id="btnTodayPray" class="btn">불러오기</button>
+            </div>
+            <div id="todayPrayArea" class="card-body small-text">
+                버튼을 눌러 오늘의 기도제목을 확인하세요.
+            </div>
+        </section>
+
+        <!-- 암송 미션 -->
+        <section class="card">
+            <div class="card-header">
+                <h2>암송 미션</h2>
+                <button id="btnMemoryMission" class="btn">랜덤 뽑기</button>
+            </div>
+            <div id="memoryMissionArea" class="card-body small-text">
+                오늘 암송할 말씀을 랜덤으로 뽑아보세요.
+            </div>
+        </section>
+
+        <!-- 시작/마침 기도자 랜덤 -->
+        <section class="card">
+            <div class="card-header">
+                <h2>기도 담당</h2>
+            </div>
+            <div class="card-body small-text">
+                <div class="row">
+                    <button id="btnStartPrayer" class="btn mini">시작 기도자</button>
+                    <span id="startPrayerArea" class="pill"></span>
+                </div>
+                <div class="row">
+                    <button id="btnEndPrayer" class="btn mini">마침 기도자</button>
+                    <span id="endPrayerArea" class="pill"></span>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
