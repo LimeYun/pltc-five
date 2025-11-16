@@ -1,0 +1,10 @@
+{
+  "name": "PLTC",
+  "short_name": "PLTC",
+  "lang": "ko-KR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#111827",
+  "background_color": "#111827"
+}
