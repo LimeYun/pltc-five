@@ -7,11 +7,13 @@ import lombok.Getter;
 @Builder
 @Getter
 public class PrayforResponse {
+    private Long id;
     private String username;
     private String content;
 
     public static PrayforResponse of(Prayfor prayfor) {
         return PrayforResponse.builder()
+                .id(prayfor.getId())
                 .username(prayfor.getUser() != null ? prayfor.getUser().getNickname() : "ALL")
                 .content(prayfor.getContent())
                 .build();

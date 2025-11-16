@@ -6,17 +6,25 @@ body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background-color: #f5f5f7;
+    min-height: 100vh;
 }
 
 .app {
-    max-width: 480px;
+    width: 100%;
+    max-width: 640px;
     margin: 0 auto;
     padding: 16px;
 }
 
 .app-header {
-    text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
 }
 
 .app-header h1 {
@@ -30,6 +38,74 @@ body {
     color: #666;
 }
 
+/* 로그인 영역 */
+.login-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kakao-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: none;
+    background-color: #FEE500;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.kakao-icon {
+    background: #000;
+    color: #FEE500;
+    border-radius: 999px;
+    padding: 2px 6px;
+    font-size: 11px;
+}
+
+.kakao-text {
+    color: #000;
+}
+
+.user-info {
+    font-size: 12px;
+    color: #555;
+}
+
+/* 탭 바 */
+.tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 999px;
+    border: none;
+    background-color: #e5e7eb;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+/* 카드 공통 */
 .card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -42,6 +118,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
 }
 
 .card-header h2 {
@@ -58,6 +135,7 @@ body {
     font-size: 14px;
 }
 
+/* 버튼 */
 .btn {
     padding: 6px 10px;
     border-radius: 999px;
@@ -77,6 +155,7 @@ body {
     transform: scale(0.97);
 }
 
+/* 행 + pill */
 .row {
     display: flex;
     align-items: center;
@@ -93,4 +172,240 @@ body {
     font-size: 12px;
     display: inline-flex;
     align-items: center;
+}
+
+/* 기도제목 리스트 */
+.pray-list-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background-color: #f3f4f6;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.pray-list-item:hover {
+    background-color: #e5e7eb;
+}
+
+.pray-list-title {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.pray-list-sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* 기도제목 상세 */
+.pray-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pray-detail-header h2 {
+    flex: 1;
+    text-align: center;
+}
+
+.pray-detail-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.pray-detail-date {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.pray-detail-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.pray-detail-textarea {
+    width: 100%;
+    min-height: 120px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 8px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.pray-detail-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.pray-detail-message {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #16a34a;
+}
+
+/* 주간 말씀 리스트 */
+.bible-list-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background-color: #f9fafb;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.bible-list-item:hover {
+    background-color: #e5e7eb;
+}
+
+.bible-list-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* 말씀 상세 헤더 & 절 리스트 */
+.bible-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bible-detail-header h2 {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    margin: 0;
+}
+
+.verses-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+}
+
+.verse-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background-color: #f9fafb;
+}
+
+.verse-no {
+    font-weight: 600;
+    color: #1d4ed8;
+    min-width: 42px;
+    flex-shrink: 0;
+}
+
+.verse-text {
+    flex: 1;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+/* 랜덤 모달 */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal {
+    width: 90%;
+    max-width: 360px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal-title {
+    margin: 0 0 8px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.modal-body {
+    min-height: 60px;
+    font-size: 14px;
+    text-align: center;
+    padding: 8px 4px 16px;
+    white-space: pre-line;
+}
+
+.modal-btn {
+    width: 100%;
+}
+
+/* 반응형: 작은 화면 */
+@media (max-width: 480px) {
+    .app {
+        padding: 12px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-header h2 {
+        font-size: 16px;
+    }
+
+    .btn {
+        font-size: 12px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+}
+
+/* 반응형: 아주 작은 화면 */
+@media (max-width: 360px) {
+    .app {
+        padding: 8px;
+    }
+
+    .app-header h1 {
+        font-size: 20px;
+    }
+
+    .tab-btn {
+        font-size: 13px;
+    }
+}
+
+/* 반응형: 넓은 화면(태블릿 이상) */
+@media (min-width: 768px) {
+    .app {
+        max-width: 720px;
+    }
+
+    .card {
+        padding: 16px 18px;
+    }
+
+    .card-header h2 {
+        font-size: 20px;
+    }
 }

@@ -5,10 +5,15 @@ import com.juan.pltc.core.entity.user.User;
 import com.juan.pltc.service.auth.KakaoAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,10 +23,30 @@ public class AuthController {
     private final KakaoAuthService kakaoAuthService;
     private final JwtUtil jwtUtil;
 
+    @Value("${app.kakao.rest-key}")
+    private String kakaoRestKey;
+
+    @Value("${app.kakao.redirect-uri}")
+    private String kakaoRedirectUri;
+
+
     public record KakaoLoginRequest(String code) {}
     public record KakaoLoginResponse(Long userId, String nickname) {}
 
     public record MeResponse(Long userId, String nickname, String role) {}
+
+    @GetMapping("/login-url")
+    public Map<String, String> kakaoLoginUrl() {
+        String url = UriComponentsBuilder
+                .fromHttpUrl("https://kauth.kakao.com/oauth/authorize")
+                .queryParam("client_id", kakaoRestKey)
+                .queryParam("redirect_uri", kakaoRedirectUri)
+                .queryParam("response_type", "code")
+                .build(true)
+                .toUriString();
+
+        return Map.of("url", url);
+    }
 
     @GetMapping("/me")
     public ResponseEntity me(@AuthenticationPrincipal User user) {
@@ -32,14 +57,14 @@ public class AuthController {
     }
 
     @GetMapping("/callback")
-    public KakaoLoginResponse kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
+    public void kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         User user = kakaoAuthService.loginWithKakaoCode(code);
 
         String jwt = jwtUtil.generateAccessToken(user.getId(), user.getRole());
 
         ResponseCookie cookie = ResponseCookie.from("AUTH", jwt)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(60L*60L*24L*3L)
                 .sameSite("Lax")
@@ -47,7 +72,7 @@ public class AuthController {
 
         response.addHeader("Set-Cookie", cookie.toString());
 
-        return new KakaoLoginResponse(user.getId(), user.getNickname());
+        response.sendRedirect("/");
     }
 
     @PostMapping

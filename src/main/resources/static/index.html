@@ -10,50 +10,164 @@
 <body>
 <div class="app">
     <header class="app-header">
-        <h1>PLTC</h1>
-        <p class="subtitle">기도 & 말씀 & 미션</p>
+        <div class="header-top">
+            <div>
+                <h1>PLTC</h1>
+                <p class="subtitle">기도 · 말씀 · 미션</p>
+            </div>
+
+            <!-- 로그인 영역 -->
+            <div class="login-area">
+                <button id="kakaoLoginBtn" class="kakao-btn">
+                    <span class="kakao-icon">TALK</span>
+                    <span class="kakao-text">Login</span>
+                </button>
+                <span id="userInfo" class="user-info"></span>
+            </div>
+        </div>
     </header>
 
+    <!-- 탭 -->
+    <nav class="tab-bar">
+        <button class="tab-btn active" data-tab="home">홈</button>
+        <button class="tab-btn" data-tab="pray">기도제목</button>
+        <button class="tab-btn" data-tab="event">이벤트</button>
+    </nav>
+
     <main>
-        <!-- 오늘의 기도제목 -->
-        <section class="card">
-            <div class="card-header">
-                <h2>오늘의 기도제목</h2>
-                <button id="btnTodayPray" class="btn">불러오기</button>
-            </div>
-            <div id="todayPrayArea" class="card-body small-text">
-                버튼을 눌러 오늘의 기도제목을 확인하세요.
-            </div>
+        <!-- 홈 탭 -->
+        <section id="view-home" class="view active">
+            <!-- 안내 카드 (최상단) -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>안내</h2>
+                </div>
+                <div class="card-body small-text">
+                    홈에서 <strong>오늘의 기도제목</strong>, <strong>주간 주제 말씀</strong>을 확인하고,<br/>
+                    기도제목 탭에서 각자의 <strong>기도제목</strong>을 적고 확인하며,<br/>
+                    이벤트 탭에서 <strong>시작/마침 기도자</strong>와 <strong>암송 미션</strong>을 뽑을 수 있습니다.
+                </div>
+            </section>
+
+            <!-- 오늘의 기도제목 (자동 로딩) -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>오늘의 기도제목</h2>
+                </div>
+                <div id="todayPrayArea" class="card-body small-text">
+                    오늘의 기도제목을 불러오는 중입니다...
+                </div>
+            </section>
+
+            <!-- 주간 주제 말씀 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>주간 주제 말씀</h2>
+                    <button id="btnWeeklyBible" class="btn">바로가기</button>
+                </div>
+                <div class="card-body small-text">
+                    이번 주에 함께 읽을 말씀을 확인해보세요.
+                </div>
+            </section>
         </section>
 
-        <!-- 암송 미션 -->
-        <section class="card">
-            <div class="card-header">
-                <h2>암송 미션</h2>
-                <button id="btnMemoryMission" class="btn">랜덤 뽑기</button>
-            </div>
-            <div id="memoryMissionArea" class="card-body small-text">
-                오늘 암송할 말씀을 랜덤으로 뽑아보세요.
-            </div>
+        <!-- 기도제목 탭 (리스트 전용) -->
+        <section id="view-pray" class="view">
+            <section class="card">
+                <div class="card-header">
+                    <h2>주간 기도제목</h2>
+                    <button id="btnReloadPrayList" class="btn mini">새로고침</button>
+                </div>
+                <div id="prayListArea" class="card-body small-text">
+                    로딩 전입니다.
+                </div>
+            </section>
         </section>
 
-        <!-- 시작/마침 기도자 랜덤 -->
-        <section class="card">
-            <div class="card-header">
-                <h2>기도 담당</h2>
-            </div>
-            <div class="card-body small-text">
-                <div class="row">
-                    <button id="btnStartPrayer" class="btn mini">시작 기도자</button>
-                    <span id="startPrayerArea" class="pill"></span>
+        <!-- 기도제목 상세/수정 뷰 -->
+        <section id="view-pray-detail" class="view">
+            <section class="card">
+                <div class="card-header pray-detail-header">
+                    <button id="btnBackToPrayList" class="btn mini">◀ 목록</button>
+                    <h2>기도제목
+                    </h2>
+                    <button id="btnPrayDetailBackHome" class="btn mini">홈으로</button>
                 </div>
-                <div class="row">
-                    <button id="btnEndPrayer" class="btn mini">마침 기도자</button>
-                    <span id="endPrayerArea" class="pill"></span>
+                <div id="prayDetailArea" class="card-body small-text">
+                    로딩 중입니다...
                 </div>
-            </div>
+            </section>
+        </section>
+
+        <!-- 이벤트 탭 -->
+        <section id="view-event" class="view">
+            <section class="card">
+                <div class="card-header">
+                    <h2>암송 미션</h2>
+                    <button id="btnMemoryMission" class="btn">랜덤 뽑기</button>
+                </div>
+                <div id="memoryMissionArea" class="card-body small-text">
+                    오늘 암송할 말씀을 랜덤으로 뽑아보세요.
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>기도 담당</h2>
+                </div>
+                <div class="card-body small-text">
+                    <div class="row">
+                        <button id="btnStartPrayer" class="btn mini">시작 기도자</button>
+                        <span id="startPrayerArea" class="pill"></span>
+                    </div>
+                    <div class="row">
+                        <button id="btnEndPrayer" class="btn mini">마침 기도자</button>
+                        <span id="endPrayerArea" class="pill"></span>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- 주간 주제 말씀 - 목록 뷰 (홈에서 진입) -->
+        <section id="view-bible" class="view">
+            <section class="card">
+                <div class="card-header">
+                    <h2>주간 주제 말씀</h2>
+                    <button id="btnBackToHome" class="btn mini">홈으로</button>
+                </div>
+                <div class="card-body small-text">
+                    <div id="bibleListArea">
+                        로딩 중입니다...
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- 주간 주제 말씀 - 상세 뷰 -->
+        <section id="view-bible-detail" class="view">
+            <section class="card">
+                <div class="card-header bible-detail-header">
+                    <button id="btnBackToBibleList" class="btn mini">◀ 목록</button>
+                    <h2 id="bibleDetailTitle">말씀 내용</h2>
+                    <button id="btnDetailBackHome" class="btn mini">홈으로</button>
+                </div>
+                <div id="bibleDetailArea" class="card-body small-text verses-container">
+                    위에서 장을 선택해주세요.
+                </div>
+            </section>
         </section>
     </main>
+</div>
+
+<!-- 랜덤 추첨용 모달 -->
+<div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal">
+        <h3 id="modalTitle" class="modal-title"></h3>
+        <div id="modalBody" class="modal-body">
+            랜덤 추첨 중...
+        </div>
+        <button id="modalConfirmBtn" class="btn modal-btn">확인</button>
+    </div>
 </div>
 
 <script src="/js/app.js"></script>

@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class RandomUserResponse {
-    private String username;
+    private String nickname;
 }
