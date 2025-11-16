@@ -46,10 +46,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let modalOnConfirm = null;
     let currentPrayId = null;
 
-    // 룰렛용 상태 (시작/마침 기도자)
-    let rouletteIntervalId = null; // openRandomModal에서 쓰는 인터벌
-    let rouletteTimeoutId = null;  // openRandomModal에서 쓰는 타임아웃
+    // 룰렛용 상태 (시작/마침 기도자 + 암송)
+    let rouletteIntervalId = null; // 인터벌
+    let rouletteTimeoutId = null;  // 타임아웃
     let rouletteNameCandidates = [];   // 기도자 이름 후보들
+
+    // 암송 미션용 풀 (repeat_bible 데이터)
+    // [{ id, title, verse }, ...]
+    let repeatMissionPool = null;
 
     // ===== 유틸 =====
     function showError(targetEl, message) {
@@ -460,8 +464,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ===== 3) 암송 미션 (repeat 구절 title 룰렛) =====
-    btnMemoryMission.addEventListener("click", () => {
+    // ===== 암송 미션용 repeat_bible 풀 로딩 =====
+    async function loadRepeatMissionPool() {
+        if (repeatMissionPool && repeatMissionPool.length > 0) {
+            return repeatMissionPool;
+        }
+
+        const pool = [];
+        const TRY_COUNT = 8; // 최대 8번 정도만 랜덤 호출해서 풀 구성
+
+        for (let i = 0; i < TRY_COUNT; i++) {
+            try {
+                const res = await fetch("/api/juan/pltc/event/repeat");
+                if (res.status === 401 || res.status === 403) {
+                    const error = new Error("unauthorized");
+                    error.code = "UNAUTHORIZED";
+                    throw error;
+                }
+                if (!res.ok) {
+                    console.error("repeat pool fetch error:", res.status);
+                    continue;
+                }
+                const data = await res.json(); // { id, title, verse }
+                pool.push(data);
+            } catch (e) {
+                if (e.code === "UNAUTHORIZED") {
+                    throw e;
+                }
+                console.error("repeat pool fetch error:", e);
+            }
+        }
+
+        if (!pool.length) {
+            const error = new Error("no_data");
+            error.code = "NO_DATA";
+            throw error;
+        }
+
+        repeatMissionPool = pool;
+        return repeatMissionPool;
+    }
+
+    // ===== 3) 암송 미션 (repeat 구절 title 룰렛 - DB title로 회전) =====
+    btnMemoryMission.addEventListener("click", async () => {
         // 이전 타이머 정리
         if (rouletteIntervalId !== null) {
             clearInterval(rouletteIntervalId);
@@ -474,68 +519,70 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalTitle.textContent = "암송 미션";
         modalOverlay.classList.remove("hidden");
-        modalBody.textContent = "랜덤 추첨 중...";
+        modalBody.textContent = "말씀 후보 불러오는 중...";
         modalOnConfirm = null;
 
-        let stopped = false;
-        let lastResult = null;
-
-        // 0.15초마다 /event/repeat 호출해서 title만 계속 바꿔줌
-        async function spinOnce() {
-            if (stopped) return;
-            try {
-                const res = await fetch("/api/juan/pltc/event/repeat");
-                if (res.status === 401 || res.status === 403) {
-                    // 로그인 필요 시 바로 종료
-                    stopped = true;
-                    modalBody.textContent = "로그인 후 이용 가능합니다.";
-                    modalOnConfirm = () => {
-                        showError(memoryMissionArea, "로그인 후 이용 가능합니다.");
-                    };
-                    return;
-                }
-                if (!res.ok) {
-                    // 에러면 그냥 조용히 무시하고 다음 루프
-                    console.error("repeat fetch error", res.status);
-                } else {
-                    const data = await res.json(); // { id, title, verse }
-                    lastResult = data;
-                    modalBody.textContent = data.title;
-                }
-            } catch (e) {
-                console.error(e);
-                // 네트워크 에러도 다음 루프에서 재시도
+        let pool;
+        try {
+            pool = await loadRepeatMissionPool();
+        } catch (e) {
+            console.error(e);
+            if (e.code === "UNAUTHORIZED") {
+                modalBody.textContent = "로그인 후 이용 가능합니다.";
+                modalOnConfirm = () => {
+                    showError(memoryMissionArea, "로그인 후 이용 가능합니다.");
+                };
+                return;
             }
+            if (e.code === "NO_DATA") {
+                modalBody.textContent = "등록된 암송 말씀이 없습니다.";
+                modalOnConfirm = null;
+                return;
+            }
+            modalBody.textContent = "오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+            modalOnConfirm = null;
+            return;
         }
 
-        // 처음 한 번 즉시 실행
-        spinOnce();
-        // 이후 주기적으로 실행
-        rouletteIntervalId = setInterval(spinOnce, 150);
+        const titles = pool.map(p => p.title).filter(Boolean);
+        if (!titles.length) {
+            modalBody.textContent = "등록된 암송 말씀이 없습니다.";
+            modalOnConfirm = null;
+            return;
+        }
 
-        // 5초 뒤에 멈추고, 마지막 결과를 최종 결과로 사용
+        // 이제부터는 DB에서 가져온 title들만 룰렛으로 돌림 (완전 프론트 애니메이션)
+        let idx = 0;
+        modalBody.textContent = titles[0];
+
+        rouletteIntervalId = setInterval(() => {
+            idx = (idx + 1) % titles.length;
+            modalBody.textContent = titles[idx];
+        }, 150);
+
+        // 5초 뒤에 룰렛 멈추고, 풀에서 최종 1개를 랜덤 선택
         rouletteTimeoutId = setTimeout(() => {
-            stopped = true;
             if (rouletteIntervalId !== null) {
                 clearInterval(rouletteIntervalId);
                 rouletteIntervalId = null;
             }
 
-            if (!lastResult) {
+            const chosen = pool[Math.floor(Math.random() * pool.length)];
+            if (!chosen) {
                 modalBody.textContent = "오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
                 modalOnConfirm = null;
                 return;
             }
 
             const finalHtml =
-                `<strong>${lastResult.title}</strong><br/>` +
-                `<div style="margin-top:4px; white-space:pre-line;">${lastResult.verse}</div>`;
+                `<strong>${chosen.title}</strong><br/>` +
+                `<div style="margin-top:4px; white-space:pre-line;">${chosen.verse}</div>`;
             modalBody.innerHTML = finalHtml;
 
             // 이벤트 탭 카드에는 title만 표시
             modalOnConfirm = () => {
                 resetTextColor(memoryMissionArea);
-                memoryMissionArea.innerHTML = `<strong>${lastResult.title}</strong>`;
+                memoryMissionArea.innerHTML = `<strong>${chosen.title}</strong>`;
             };
         }, 5000);
     });
