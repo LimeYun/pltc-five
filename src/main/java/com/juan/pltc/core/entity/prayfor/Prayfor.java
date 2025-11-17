@@ -24,9 +24,9 @@ public class Prayfor {
 
     private String content;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(name = "target_date")
-    private DayOfWeek targetDate;
+    private String targetDate;
 
     public void update(PrayforUpdateRequest request) {
         this.content = request.getContent();
